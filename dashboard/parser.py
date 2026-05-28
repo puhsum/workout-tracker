@@ -27,7 +27,7 @@ def _parse_file(path: Path) -> Optional[Dict[str, Any]]:
         return None
 
     try:
-        fm = yaml.safe_load(match.group(1))
+        fm = yaml.safe_load(_quote_sets_values(match.group(1)))
     except yaml.YAMLError:
         return None
 
@@ -61,6 +61,17 @@ def _parse_file(path: Path) -> Optional[Dict[str, Any]]:
         "exercises": exercises,
         "exercise_names": [e["name"] for e in exercises],
     }
+
+
+def _quote_sets_values(yaml_str: str) -> str:
+    """Quote 'sets:' values that contain a colon so PyYAML doesn't treat them as nested mappings."""
+    def _quote(m: re.Match) -> str:
+        val = m.group(2)
+        if val.startswith('"') or val.startswith("'"):
+            return m.group(0)
+        val = val.replace('"', '\\"')
+        return f'{m.group(1)}"{val}"'
+    return re.sub(r'^(\s+sets:\s+)(.+)$', _quote, yaml_str, flags=re.MULTILINE)
 
 
 def _parse_sets(sets_str: str) -> List[Dict]:

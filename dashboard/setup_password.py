@@ -2,11 +2,10 @@
 """Run once to generate credentials. Copy output into dashboard/.env"""
 import secrets
 import getpass
-from passlib.context import CryptContext
+import bcrypt
 
-ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 password = getpass.getpass("Choose a dashboard password: ")
-hashed = ctx.hash(password)
+hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 secret = secrets.token_hex(32)
 
 print("\nAdd these lines to dashboard/.env:\n")
