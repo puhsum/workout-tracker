@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu
-WorkingDirectory=/home/ubuntu/gym-logs/bot
-ExecStart=/home/ubuntu/gym-logs/bot/venv/bin/python bot.py
+User=gabe
+WorkingDirectory=/home/gabe/workout-tracker/bot
+ExecStart=/home/gabe/workout-tracker/bot/venv/bin/python bot.py
 Restart=always
 RestartSec=10
 StandardOutput=journal

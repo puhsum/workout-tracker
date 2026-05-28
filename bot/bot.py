@@ -7,6 +7,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from converter import convert_and_save
 
 load_dotenv()
 
@@ -85,14 +86,18 @@ async def handle_workout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     line_count = len([l for l in text.splitlines() if l.strip()])
     await update.message.reply_text(
-        f"Got it — {line_count} exercise line(s) logged for {date_str}.\n"
-        "Converting to Obsidian format..."
+        f"Got it — {line_count} line(s) received. Converting..."
     )
     logger.info(f"Workout saved to {pending_path} ({line_count} lines)")
 
-    # Phase 2: trigger converter here
-    # from converter import convert_and_save
-    # await convert_and_save(pending_path, now)
+    try:
+        summary = await convert_and_save(pending_path, WORKOUTS_DIR)
+        await update.message.reply_text(f"Done! {summary}")
+    except Exception as e:
+        logger.error(f"Conversion failed: {e}")
+        await update.message.reply_text(
+            f"Conversion failed: {e}\nRaw file kept at {pending_path.name}"
+        )
 
 
 def main() -> None:

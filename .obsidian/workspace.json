@@ -201,6 +201,7 @@
   },
   "active": "c1d77039f12d8501",
   "lastOpenFiles": [
+    "bot/converter.py",
     "bot/workout-bot.service",
     "bot/requirements.txt",
     "bot/bot.py",
@@ -245,7 +246,6 @@
     "Attachments/image 12.png",
     "Attachments/image 11.png",
     "Attachments/image 10.png",
-    "Attachments/image 9.png",
-    "Attachments/cv_GabeSchmidt.pdf"
+    "Attachments/image 9.png"
   ]
 }
