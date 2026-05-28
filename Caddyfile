@@ -1,0 +1,12 @@
+# Workout Tracker Dashboard
+# Uses a self-signed cert (browser will warn — click "Advanced > Proceed")
+# To add a real domain later: replace ":443" with "yourdomain.com"
+
+:443 {
+    tls internal
+    reverse_proxy localhost:8000
+}
+
+:80 {
+    redir https://{host}{uri} permanent
+}

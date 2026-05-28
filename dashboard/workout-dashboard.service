@@ -1,0 +1,16 @@
+[Unit]
+Description=Workout Tracker Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=gabe
+WorkingDirectory=/home/gabe/workout-tracker/dashboard
+ExecStart=/home/gabe/workout-tracker/dashboard/venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
