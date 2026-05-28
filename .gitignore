@@ -1,0 +1,8 @@
+bot/.env
+*.pending
+__pycache__/
+*.pyc
+venv/
+.env
+Attachments/
+Notion/
