@@ -51,7 +51,7 @@
   </span>
   {% if workouts %}
   <span class="nav-meta">
-    {{ workouts | sum(attribute='exercises') | list | length }} exercises
+    {{ workouts | sum(attribute='exercises', start=[]) | length }} exercises
     {% set dur = workouts[0].duration %}
     {% if dur %} · {{ dur }} min{% endif %}
   </span>
