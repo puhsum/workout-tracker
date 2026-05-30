@@ -6,6 +6,7 @@
 <title>GymLocker — Log Workout</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
   body {
     background: #0d0d0d;
     color: #e0e0e0;
@@ -14,27 +15,35 @@
     padding-bottom: 40px;
   }
 
-  /* Nav */
+  /* Nav — 3-column grid so timer stays perfectly centred on any screen width */
   nav {
     background: #111;
     border-bottom: 1px solid #1e1e1e;
-    padding: 0 20px;
+    padding: 0 16px;
     height: 56px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100vw;
   }
-  .nav-left { display: flex; align-items: center; gap: 12px; }
-  .nav-brand { font-size: 15px; font-weight: 700; color: #fff; }
+  .nav-back {
+    color: #555;
+    font-size: 22px;
+    text-decoration: none;
+    line-height: 1;
+    justify-self: start;
+    padding: 8px 8px 8px 0;
+  }
   .timer {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     color: #4ade80;
     font-variant-numeric: tabular-nums;
     letter-spacing: 1px;
+    justify-self: center;
   }
   .btn-finish {
     background: #4ade80;
@@ -43,9 +52,11 @@
     font-size: 14px;
     border: none;
     border-radius: 8px;
-    padding: 9px 18px;
+    padding: 9px 16px;
     cursor: pointer;
     transition: background 0.15s;
+    justify-self: end;
+    white-space: nowrap;
   }
   .btn-finish:hover { background: #22c55e; }
   .btn-finish:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
@@ -145,17 +156,13 @@
   #sets-container { margin-bottom: 12px; }
 
   .set-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 16px 1fr 28px;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 8px;
   }
-  .set-row .weight-wrap { display: flex; align-items: center; gap: 6px; flex: 1; }
-  .set-row .weight-wrap input { min-width: 0; }
-  .set-row .kg-label { font-size: 13px; color: #555; white-space: nowrap; flex-shrink: 0; }
-  .set-row .sep { font-size: 13px; color: #444; flex-shrink: 0; }
-  .set-row .reps-wrap { display: flex; align-items: center; gap: 6px; flex: 1; }
-  .set-row .reps-label { font-size: 13px; color: #555; white-space: nowrap; flex-shrink: 0; }
+  .set-row .sep { font-size: 14px; color: #444; text-align: center; }
   .btn-rm-set {
     background: none;
     border: none;
@@ -224,10 +231,7 @@
 <body>
 
 <nav>
-  <div class="nav-left">
-    <a href="/dashboard" style="color:#555;font-size:20px;text-decoration:none;line-height:1">←</a>
-    <span class="nav-brand">🔒 GymLocker</span>
-  </div>
+  <a href="/dashboard" class="nav-back">←</a>
   <div id="timer" class="timer">0:00</div>
   <button class="btn-finish" id="btn-finish" onclick="finishWorkout()">Finish</button>
 </nav>
@@ -372,15 +376,9 @@ function addSetRow() {
   const row = document.createElement('div');
   row.className = 'set-row';
   row.innerHTML = `
-    <div class="weight-wrap">
-      <input type="number" placeholder="Weight" min="0" step="0.5" class="weight-input">
-      <span class="kg-label">kg</span>
-    </div>
+    <input type="number" placeholder="kg" min="0" step="0.5" class="weight-input">
     <span class="sep">×</span>
-    <div class="reps-wrap">
-      <input type="number" placeholder="Reps" min="1" step="1" class="reps-input">
-      <span class="reps-label">reps</span>
-    </div>
+    <input type="number" placeholder="reps" min="1" step="1" class="reps-input">
     <button class="btn-rm-set" onclick="removeSetRow(this)" title="Remove set">✕</button>
   `;
   container.appendChild(row);
@@ -388,8 +386,7 @@ function addSetRow() {
   // Auto-fill weight from previous set
   const rows = container.querySelectorAll('.set-row');
   if (rows.length > 1) {
-    const prev = rows[rows.length - 2];
-    const prevWeight = prev.querySelector('.weight-input').value;
+    const prevWeight = rows[rows.length - 2].querySelector('.weight-input').value;
     if (prevWeight) row.querySelector('.weight-input').value = prevWeight;
   }
 
@@ -419,8 +416,9 @@ async function logExercise() {
   } else {
     const rows = document.querySelectorAll('#sets-container .set-row');
     for (const row of rows) {
-      const reps = parseInt(row.querySelector('.reps-input').value);
-      if (!reps) { toast('Enter reps for each set'); return; }
+      const repsEl = row.querySelector('.reps-input');
+      const reps = parseInt(repsEl.value);
+      if (!reps) { toast('Enter reps for each set'); repsEl.focus(); return; }
       const weightVal = row.querySelector('.weight-input').value;
       const weight = weightVal ? parseFloat(weightVal) : null;
       sets.push(weight ? { weight, reps } : { reps });
