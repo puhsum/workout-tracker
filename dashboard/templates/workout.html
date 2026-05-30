@@ -316,12 +316,24 @@ async function init() {
 
   // Start fresh
   const res = await fetch('/api/workout/start', { method: 'POST' });
+  if (!res.ok) {
+    fatalError(`Could not start session (HTTP ${res.status}). Try refreshing.`);
+    return;
+  }
   const data = await res.json();
   sessionId = data.session_id;
   startTime = new Date(data.start_time);
   localStorage.setItem('workout_session', JSON.stringify({ id: sessionId, start: data.start_time }));
   startTimer();
   addSetRow();
+}
+
+function fatalError(msg) {
+  const nav = document.querySelector('nav');
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:#7f1d1d;color:#fca5a5;padding:12px 20px;font-size:13px;font-weight:600;text-align:center;';
+  banner.textContent = '⚠ ' + msg;
+  nav.after(banner);
 }
 
 // ── Timer ─────────────────────────────────────────────────────────────────────
@@ -432,7 +444,11 @@ async function logExercise() {
     body: JSON.stringify({ name, sets }),
   });
 
-  if (!res.ok) { toast('Failed to save — try again'); return; }
+  if (!res.ok) {
+    const err = await res.text().catch(() => '');
+    toast(`Save failed (${res.status})${err ? ': ' + err.slice(0, 80) : ''}`);
+    return;
+  }
   const session = await res.json();
   exercises = session.exercises;
   renderExercises();
@@ -518,7 +534,8 @@ async function finishWorkout() {
   if (!res.ok) {
     btn.disabled = false;
     btn.textContent = 'Finish';
-    toast('Error saving — try again');
+    const err = await res.text().catch(() => '');
+    toast(`Finish failed (${res.status})${err ? ': ' + err.slice(0, 100) : ''}`);
     return;
   }
 
@@ -538,7 +555,7 @@ function toast(msg) {
 }
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-init();
+init().catch(err => fatalError('Startup error: ' + err.message));
 </script>
 </body>
 </html>

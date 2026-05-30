@@ -2,12 +2,13 @@ import json
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 SESSIONS_DIR = Path(__file__).parent / "sessions"
 SESSIONS_DIR.mkdir(exist_ok=True)
 
 
-def create_session() -> dict:
+def create_session() -> Optional[dict]:
     sid = str(uuid.uuid4())
     session = {
         "id": sid,
@@ -18,12 +19,12 @@ def create_session() -> dict:
     return session
 
 
-def get_session(sid: str) -> dict | None:
+def get_session(sid: str) -> Optional[dict]:
     p = SESSIONS_DIR / f"{sid}.json"
     return json.loads(p.read_text()) if p.exists() else None
 
 
-def add_exercise(sid: str, name: str, sets: list) -> dict | None:
+def add_exercise(sid: str, name: str, sets: list) -> Optional[dict]:
     s = get_session(sid)
     if s is None:
         return None
@@ -32,7 +33,7 @@ def add_exercise(sid: str, name: str, sets: list) -> dict | None:
     return s
 
 
-def remove_exercise(sid: str, index: int) -> dict | None:
+def remove_exercise(sid: str, index: int) -> Optional[dict]:
     s = get_session(sid)
     if s is None:
         return None
@@ -42,7 +43,7 @@ def remove_exercise(sid: str, index: int) -> dict | None:
     return s
 
 
-def finish_session(sid: str) -> dict | None:
+def finish_session(sid: str) -> Optional[dict]:
     s = get_session(sid)
     if s is None:
         return None

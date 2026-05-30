@@ -2,11 +2,18 @@ from datetime import datetime
 from pathlib import Path
 
 
+def _yaml_str(value: str) -> str:
+    """Return a safely quoted YAML string value."""
+    escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'
+
+
 def _fmt_sets(sets: list) -> str:
     if not sets:
-        return ""
+        return '""'
     if sets[0].get("type") == "duration":
-        return f"duration: {sets[0].get('duration', '?')}"
+        dur = sets[0].get("duration", "?")
+        return f'"duration: {dur}"'
     parts = []
     for s in sets:
         weight = s.get("weight")
@@ -15,10 +22,12 @@ def _fmt_sets(sets: list) -> str:
             parts.append(f"{weight}({reps})")
         else:
             parts.append(f"({reps})")
-    return ", ".join(parts)
+    return f'"{", ".join(parts)}"'
 
 
 def write_workout(session: dict, vault_dir: Path) -> str:
+    vault_dir.mkdir(parents=True, exist_ok=True)
+
     start = datetime.fromisoformat(session["start_time"]).astimezone()
     end = datetime.fromisoformat(session["end_time"]).astimezone()
     duration = max(1, int((end - start).total_seconds() / 60))
@@ -29,8 +38,9 @@ def write_workout(session: dict, vault_dir: Path) -> str:
 
     exercises_yaml = ""
     for ex in session.get("exercises", []):
+        name = _yaml_str(str(ex.get("name", "")).strip())
         sets_str = _fmt_sets(ex.get("sets", []))
-        exercises_yaml += f"  - name: {ex['name']}\n    sets: {sets_str}\n"
+        exercises_yaml += f"  - name: {name}\n    sets: {sets_str}\n"
 
     if not exercises_yaml:
         exercises_yaml = "  []\n"
@@ -39,8 +49,8 @@ def write_workout(session: dict, vault_dir: Path) -> str:
         f"---\n"
         f"created: {created}\n"
         f"date: {date_str}\n"
-        f"log-in: {log_in}\n"
-        f"log-out: {log_out}\n"
+        f'log-in: "{log_in}"\n'
+        f'log-out: "{log_out}"\n'
         f"duration: {duration}\n"
         f"tags:\n"
         f"  - project/workout\n"
