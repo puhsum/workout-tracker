@@ -19,8 +19,8 @@ def _fmt_sets(sets: list) -> str:
 
 
 def write_workout(session: dict, vault_dir: Path) -> str:
-    start = datetime.fromisoformat(session["start_time"])
-    end = datetime.fromisoformat(session["end_time"])
+    start = datetime.fromisoformat(session["start_time"]).astimezone()
+    end = datetime.fromisoformat(session["end_time"]).astimezone()
     duration = max(1, int((end - start).total_seconds() / 60))
     date_str = start.strftime("%Y-%m-%d")
     log_in = start.strftime("%H:%M")

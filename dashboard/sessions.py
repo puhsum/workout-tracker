@@ -1,6 +1,6 @@
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 SESSIONS_DIR = Path(__file__).parent / "sessions"
@@ -11,7 +11,7 @@ def create_session() -> dict:
     sid = str(uuid.uuid4())
     session = {
         "id": sid,
-        "start_time": datetime.now().isoformat(timespec="seconds"),
+        "start_time": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "exercises": [],
     }
     _write(session)
@@ -46,7 +46,7 @@ def finish_session(sid: str) -> dict | None:
     s = get_session(sid)
     if s is None:
         return None
-    s["end_time"] = datetime.now().isoformat(timespec="seconds")
+    s["end_time"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     _write(s)
     return s
 

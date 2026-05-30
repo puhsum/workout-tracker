@@ -9,11 +9,11 @@ def parse_workouts(workouts_dir: Path) -> List[Dict[str, Any]]:
     if not workouts_dir.exists():
         return []
     workouts = []
-    for md_file in sorted(workouts_dir.glob("*.md"), reverse=True):
+    for md_file in workouts_dir.glob("*.md"):
         w = _parse_file(md_file)
         if w:
             workouts.append(w)
-    return workouts
+    return sorted(workouts, key=lambda w: w["date"], reverse=True)
 
 
 def _parse_file(path: Path) -> Optional[Dict[str, Any]]:
