@@ -88,6 +88,34 @@ def _parse_sets(sets_str: str) -> List[Dict]:
     return sets
 
 
+_DURATION_PREFIX = re.compile(
+    r'^\d+\.?\d*\s*(?:min|mins|minute|minutes|sec|secs|second|seconds|hr|hrs|hour|hours)\s+',
+    re.IGNORECASE,
+)
+
+
+def _normalize_exercise_name(name: str) -> str:
+    """Strip leading duration tokens ('10min ', '3mins ', '30 minute ') from exercise names."""
+    cleaned = _DURATION_PREFIX.sub('', name.strip())
+    if not cleaned:
+        return name.strip()
+    return cleaned[0].upper() + cleaned[1:]
+
+
+def get_exercise_names(workouts: List[Dict]) -> List[str]:
+    """Return sorted unique exercise names, normalized so duration prefixes are removed."""
+    seen: set[str] = set()
+    names: list[str] = []
+    for w in workouts:
+        for raw in w.get("exercise_names", []):
+            normalized = _normalize_exercise_name(raw)
+            key = normalized.lower()
+            if key not in seen:
+                seen.add(key)
+                names.append(normalized)
+    return sorted(names)
+
+
 def compute_stats(workouts: List[Dict]) -> Dict:
     if not workouts:
         return {"total": 0, "this_week": 0, "streak": 0, "last_workout": "—"}

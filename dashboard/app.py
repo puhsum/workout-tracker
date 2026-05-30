@@ -14,7 +14,7 @@ load_dotenv(_root / "bot" / ".env")
 load_dotenv(Path(__file__).parent / ".env")
 
 from auth import verify_password, create_token, verify_token
-from parser import compute_stats, parse_workouts
+from parser import compute_stats, get_exercise_names, parse_workouts
 import sessions as sess
 from writer import write_workout
 
@@ -161,5 +161,4 @@ async def workout_finish(session_id: str, session: Optional[str] = Cookie(defaul
 async def list_exercises(session: Optional[str] = Cookie(default=None)):
     _require_user(session)
     workouts = parse_workouts(VAULT_DIR)
-    names = sorted({name for w in workouts for name in w["exercise_names"]})
-    return {"exercises": names}
+    return {"exercises": get_exercise_names(workouts)}
