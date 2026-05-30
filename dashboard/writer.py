@@ -25,13 +25,14 @@ def _fmt_sets(sets: list) -> str:
     return f'"{", ".join(parts)}"'
 
 
-def write_workout(session: dict, vault_dir: Path) -> str:
+def write_workout(session: dict, vault_dir: Path, local_date: str = None) -> str:
     vault_dir.mkdir(parents=True, exist_ok=True)
 
     start = datetime.fromisoformat(session["start_time"]).astimezone()
     end = datetime.fromisoformat(session["end_time"]).astimezone()
     duration = max(1, int((end - start).total_seconds() / 60))
-    date_str = start.strftime("%Y-%m-%d")
+    # Use the client's local date if provided — avoids server/browser timezone mismatch
+    date_str = local_date if local_date else start.strftime("%Y-%m-%d")
     log_in = start.strftime("%H:%M")
     log_out = end.strftime("%H:%M")
     created = start.strftime("%Y-%m-%d %H:%M")

@@ -135,6 +135,10 @@ class ExerciseIn(BaseModel):
     sets: list
 
 
+class FinishIn(BaseModel):
+    local_date: Optional[str] = None
+
+
 @app.post("/api/workout/{session_id}/exercise")
 async def workout_add_exercise(
     session_id: str,
@@ -162,12 +166,16 @@ async def workout_remove_exercise(
 
 
 @app.post("/api/workout/{session_id}/finish")
-async def workout_finish(session_id: str, session: Optional[str] = Cookie(default=None)):
+async def workout_finish(
+    session_id: str,
+    body: FinishIn = FinishIn(),
+    session: Optional[str] = Cookie(default=None),
+):
     _require_user(session)
     s = sess.finish_session(session_id)
     if s is None:
         raise HTTPException(404, "Session not found")
-    filename = write_workout(s, VAULT_DIR)
+    filename = write_workout(s, VAULT_DIR, local_date=body.local_date)
     sess.delete_session(session_id)
     return {"file": filename}
 

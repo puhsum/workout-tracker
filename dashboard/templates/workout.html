@@ -602,7 +602,14 @@ async function finishWorkout() {
 
   clearInterval(timerInterval);
 
-  const res = await fetch(`/api/workout/${sessionId}/finish`, { method: 'POST' });
+  const now = new Date();
+  const localDate = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+  const res = await fetch(`/api/workout/${sessionId}/finish`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ local_date: localDate }),
+  });
   if (!res.ok) {
     btn.disabled = false;
     btn.textContent = 'Finish';
