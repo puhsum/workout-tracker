@@ -1,5 +1,6 @@
 import re
 import yaml
+from collections import Counter, defaultdict
 from pathlib import Path
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
@@ -114,6 +115,43 @@ def get_exercise_names(workouts: List[Dict]) -> List[str]:
                 seen.add(key)
                 names.append(normalized)
     return sorted(names)
+
+
+def compute_summary(workouts: List[Dict]) -> Dict:
+    exercise_counts: Counter = Counter()
+    week_counts: Dict[str, int] = defaultdict(int)
+    month_counts: Dict[str, int] = defaultdict(int)
+
+    for w in workouts:
+        for name in w.get("exercise_names", []):
+            n = _normalize_exercise_name(name)
+            if n:
+                exercise_counts[n] += 1
+        try:
+            d = date.fromisoformat(w["date"])
+            mon = d - timedelta(days=d.weekday())
+            week_counts[mon.isoformat()] += 1
+            month_counts[d.strftime("%Y-%m")] += 1
+        except (ValueError, TypeError):
+            pass
+
+    top_exercises = exercise_counts.most_common(15)
+
+    all_weeks = sorted(week_counts)
+    recent_weeks = {k: week_counts[k] for k in all_weeks[-20:]}
+
+    all_months = sorted(month_counts)
+    recent_months = {k: month_counts[k] for k in all_months[-12:]}
+
+    # Average sessions per week (over active weeks only)
+    avg_per_week = round(len(workouts) / max(len(week_counts), 1), 1)
+
+    return {
+        "top_exercises": top_exercises,
+        "week_counts": recent_weeks,
+        "month_counts": recent_months,
+        "avg_per_week": avg_per_week,
+    }
 
 
 def compute_stats(workouts: List[Dict]) -> Dict:

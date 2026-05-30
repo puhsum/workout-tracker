@@ -14,7 +14,7 @@ load_dotenv(_root / "bot" / ".env")
 load_dotenv(Path(__file__).parent / ".env")
 
 from auth import verify_password, create_token, verify_token
-from parser import compute_stats, get_exercise_names, parse_workouts
+from parser import compute_stats, compute_summary, get_exercise_names, parse_workouts
 import sessions as sess
 from writer import write_workout
 
@@ -79,13 +79,28 @@ async def dashboard(request: Request, session: Optional[str] = Cookie(default=No
         return RedirectResponse("/login")
 
     workouts = parse_workouts(VAULT_DIR)
-    stats = compute_stats(workouts)
     workouts_json = json.dumps(workouts[:150]).replace("</", "<\\/")
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
-        "workouts": workouts[:25],
+        "workouts_json": workouts_json,
+    })
+
+
+# ── Summary ───────────────────────────────────────────────────────────────────
+
+@app.get("/summary", response_class=HTMLResponse)
+async def summary(request: Request, session: Optional[str] = Cookie(default=None)):
+    if not _get_user(session):
+        return RedirectResponse("/login")
+    workouts = parse_workouts(VAULT_DIR)
+    stats = compute_stats(workouts)
+    summ = compute_summary(workouts)
+    workouts_json = json.dumps(workouts[:150]).replace("</", "<\\/")
+    return templates.TemplateResponse("summary.html", {
+        "request": request,
         "stats": stats,
+        "summary": summ,
         "workouts_json": workouts_json,
     })
 
