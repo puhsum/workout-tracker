@@ -177,7 +177,24 @@
 
   /* Duration row */
   #duration-row { margin-bottom: 12px; display: none; }
-  #duration-row input { width: 100%; }
+  .dur-inputs { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .dur-inputs input { width: 72px; flex-shrink: 0; }
+  .dur-label { font-size: 13px; color: #555; flex-shrink: 0; }
+  .btn-timer {
+    width: 100%;
+    background: none;
+    border: 1px dashed #2a2a2a;
+    color: #555;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 14px;
+  }
+  .btn-timer:hover { border-color: #4ade80; color: #4ade80; }
+  .btn-timer.running { border-color: #f87171 !important; color: #f87171 !important; border-style: solid; }
 
   /* Buttons */
   .btn-add-set {
@@ -272,7 +289,13 @@
 
     <!-- Duration input -->
     <div id="duration-row">
-      <input type="text" id="duration-input" placeholder="e.g. 10min, 5:30">
+      <div class="dur-inputs">
+        <input type="number" id="dur-min" placeholder="0" min="0">
+        <span class="dur-label">min</span>
+        <input type="number" id="dur-sec" placeholder="0" min="0" max="59">
+        <span class="dur-label">sec</span>
+      </div>
+      <button class="btn-timer" id="btn-cardio-timer" onclick="toggleCardioTimer()">▶ Start Timer</button>
     </div>
 
     <button class="btn-log" onclick="logExercise()">Log Exercise</button>
@@ -371,12 +394,56 @@ async function loadExerciseSuggestions() {
 // ── Type toggle ───────────────────────────────────────────────────────────────
 
 function setType(type) {
+  if (type === 'reps') stopCardioTimer();
   exerciseType = type;
   document.getElementById('btn-type-reps').classList.toggle('active', type === 'reps');
   document.getElementById('btn-type-duration').classList.toggle('active', type === 'duration');
   document.getElementById('sets-container').style.display = type === 'reps' ? '' : 'none';
   document.getElementById('btn-add-set').style.display = type === 'reps' ? '' : 'none';
   document.getElementById('duration-row').style.display = type === 'duration' ? 'block' : 'none';
+}
+
+// ── Cardio timer ─────────────────────────────────────────────────────────────
+
+let cardioInterval = null;
+let cardioStart = null;
+
+function toggleCardioTimer() {
+  if (cardioInterval) {
+    stopCardioTimer();
+  } else {
+    startCardioTimer();
+  }
+}
+
+function startCardioTimer() {
+  cardioStart = Date.now();
+  document.getElementById('dur-min').value = '';
+  document.getElementById('dur-sec').value = '';
+  const btn = document.getElementById('btn-cardio-timer');
+  btn.classList.add('running');
+  cardioInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - cardioStart) / 1000);
+    const m = Math.floor(elapsed / 60);
+    const s = elapsed % 60;
+    btn.textContent = `■ Stop  ${m}:${String(s).padStart(2, '0')}`;
+  }, 1000);
+  btn.textContent = '■ Stop  0:00';
+}
+
+function stopCardioTimer() {
+  if (!cardioInterval) return;
+  clearInterval(cardioInterval);
+  cardioInterval = null;
+  if (cardioStart) {
+    const elapsed = Math.floor((Date.now() - cardioStart) / 1000);
+    document.getElementById('dur-min').value = Math.floor(elapsed / 60) || '';
+    document.getElementById('dur-sec').value = elapsed % 60 || '';
+    cardioStart = null;
+  }
+  const btn = document.getElementById('btn-cardio-timer');
+  btn.classList.remove('running');
+  btn.textContent = '▶ Start Timer';
 }
 
 // ── Set rows ──────────────────────────────────────────────────────────────────
@@ -422,8 +489,11 @@ async function logExercise() {
   let sets = [];
 
   if (exerciseType === 'duration') {
-    const dur = document.getElementById('duration-input').value.trim();
-    if (!dur) { toast('Enter a duration'); return; }
+    stopCardioTimer();
+    const mins = parseInt(document.getElementById('dur-min').value) || 0;
+    const secs = parseInt(document.getElementById('dur-sec').value) || 0;
+    if (!mins && !secs) { toast('Enter a duration or use the timer'); return; }
+    const dur = [mins ? `${mins}min` : '', secs ? `${secs}sec` : ''].filter(Boolean).join(' ');
     sets = [{ type: 'duration', duration: dur }];
   } else {
     const rows = document.querySelectorAll('#sets-container .set-row');
@@ -512,7 +582,9 @@ function escHtml(str) {
 
 function resetForm() {
   document.getElementById('ex-name').value = '';
-  document.getElementById('duration-input').value = '';
+  stopCardioTimer();
+  document.getElementById('dur-min').value = '';
+  document.getElementById('dur-sec').value = '';
   document.getElementById('sets-container').innerHTML = '';
   setType('reps');
   addSetRow();
