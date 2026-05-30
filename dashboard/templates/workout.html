@@ -177,7 +177,7 @@
 
   /* Duration row */
   #duration-row { margin-bottom: 12px; display: none; }
-  #duration-row input { max-width: 200px; }
+  #duration-row input { width: 100%; }
 
   /* Buttons */
   .btn-add-set {
@@ -364,7 +364,7 @@ function setType(type) {
   document.getElementById('btn-type-duration').classList.toggle('active', type === 'duration');
   document.getElementById('sets-container').style.display = type === 'reps' ? '' : 'none';
   document.getElementById('btn-add-set').style.display = type === 'reps' ? '' : 'none';
-  document.getElementById('duration-row').style.display = type === 'duration' ? '' : 'none';
+  document.getElementById('duration-row').style.display = type === 'duration' ? 'block' : 'none';
 }
 
 // ── Set rows ──────────────────────────────────────────────────────────────────
