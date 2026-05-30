@@ -4,19 +4,21 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Form, Request, Cookie
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, Form, Request, Cookie, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 
-# Load env — bot/.env holds shared vars; dashboard/.env holds dashboard-specific ones
 _root = Path(__file__).parent.parent
 load_dotenv(_root / "bot" / ".env")
 load_dotenv(Path(__file__).parent / ".env")
 
 from auth import verify_password, create_token, verify_token
 from parser import compute_stats, parse_workouts
+import sessions as sess
+from writer import write_workout
 
-WORKOUTS_DIR = _root / "workouts"
+VAULT_DIR = _root / "workout-converted"
 DASHBOARD_USERNAME = os.environ.get("DASHBOARD_USERNAME", "admin")
 DASHBOARD_PASSWORD_HASH = os.environ["DASHBOARD_PASSWORD_HASH"]
 
@@ -26,6 +28,13 @@ templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 
 def _get_user(session: Optional[str]) -> Optional[str]:
     return verify_token(session) if session else None
+
+
+def _require_user(session: Optional[str]) -> str:
+    user = _get_user(session)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return user
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -69,7 +78,7 @@ async def dashboard(request: Request, session: Optional[str] = Cookie(default=No
     if not _get_user(session):
         return RedirectResponse("/login")
 
-    workouts = parse_workouts(WORKOUTS_DIR)
+    workouts = parse_workouts(VAULT_DIR)
     stats = compute_stats(workouts)
     workouts_json = json.dumps(workouts[:150]).replace("</", "<\\/")
 
@@ -79,3 +88,78 @@ async def dashboard(request: Request, session: Optional[str] = Cookie(default=No
         "stats": stats,
         "workouts_json": workouts_json,
     })
+
+
+# ── Workout Logging ───────────────────────────────────────────────────────────
+
+@app.get("/workout/new", response_class=HTMLResponse)
+async def workout_new(request: Request, session: Optional[str] = Cookie(default=None)):
+    if not _get_user(session):
+        return RedirectResponse("/login")
+    return templates.TemplateResponse("workout.html", {"request": request})
+
+
+@app.post("/api/workout/start")
+async def workout_start(session: Optional[str] = Cookie(default=None)):
+    _require_user(session)
+    s = sess.create_session()
+    return {"session_id": s["id"], "start_time": s["start_time"]}
+
+
+@app.get("/api/workout/{session_id}")
+async def workout_get(session_id: str, session: Optional[str] = Cookie(default=None)):
+    _require_user(session)
+    s = sess.get_session(session_id)
+    if s is None:
+        raise HTTPException(404, "Session not found")
+    return s
+
+
+class ExerciseIn(BaseModel):
+    name: str
+    sets: list
+
+
+@app.post("/api/workout/{session_id}/exercise")
+async def workout_add_exercise(
+    session_id: str,
+    body: ExerciseIn,
+    session: Optional[str] = Cookie(default=None),
+):
+    _require_user(session)
+    s = sess.add_exercise(session_id, body.name.strip(), body.sets)
+    if s is None:
+        raise HTTPException(404, "Session not found")
+    return s
+
+
+@app.delete("/api/workout/{session_id}/exercise/{index}")
+async def workout_remove_exercise(
+    session_id: str,
+    index: int,
+    session: Optional[str] = Cookie(default=None),
+):
+    _require_user(session)
+    s = sess.remove_exercise(session_id, index)
+    if s is None:
+        raise HTTPException(404, "Session not found")
+    return s
+
+
+@app.post("/api/workout/{session_id}/finish")
+async def workout_finish(session_id: str, session: Optional[str] = Cookie(default=None)):
+    _require_user(session)
+    s = sess.finish_session(session_id)
+    if s is None:
+        raise HTTPException(404, "Session not found")
+    filename = write_workout(s, VAULT_DIR)
+    sess.delete_session(session_id)
+    return {"file": filename}
+
+
+@app.get("/api/exercises")
+async def list_exercises(session: Optional[str] = Cookie(default=None)):
+    _require_user(session)
+    workouts = parse_workouts(VAULT_DIR)
+    names = sorted({name for w in workouts for name in w["exercise_names"]})
+    return {"exercises": names}

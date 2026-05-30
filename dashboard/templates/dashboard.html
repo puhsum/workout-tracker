@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Workout Tracker</title>
+<title>GymLocker</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -121,8 +121,9 @@
 <body>
 
 <nav>
-  <div class="nav-brand">💪 <span>Workout</span> Tracker</div>
+  <div class="nav-brand">🔒 <span>Gym</span>Locker</div>
   <div class="nav-right">
+    <a href="/workout/new" style="color:#4ade80; border-color:#4ade80;">+ New Workout</a>
     <span class="user">{{ stats.last_workout }}</span>
     <a href="/logout">Sign out</a>
   </div>
@@ -174,7 +175,7 @@
         {% endfor %}
       </div>
       {% else %}
-      <div class="empty">No workouts yet — send one via Telegram!</div>
+      <div class="empty">No workouts yet — <a href="/workout/new" style="color:#4ade80">log your first one</a>!</div>
       {% endif %}
     </div>
 
