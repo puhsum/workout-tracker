@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GymLocker — {{ date }}</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d0d0d; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding-bottom: 48px; }
+
+  nav { background: #111; border-bottom: 1px solid #1e1e1e; padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 16px; }
+  .nav-back { color: #555; font-size: 20px; text-decoration: none; line-height: 1; }
+  .nav-back:hover { color: #e0e0e0; }
+  .nav-date { font-size: 15px; font-weight: 700; color: #fff; }
+  .nav-meta { font-size: 13px; color: #555; }
+
+  main { padding: 32px 24px; max-width: 720px; margin: 0 auto; }
+
+  .session { margin-bottom: 40px; }
+  .session-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #1e1e1e; }
+  .session-time { font-size: 13px; color: #4ade80; font-weight: 600; }
+  .session-duration { font-size: 12px; color: #444; }
+
+  .ex-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #161616; gap: 16px; }
+  .ex-row:last-child { border-bottom: none; }
+  .ex-name { font-size: 15px; font-weight: 600; color: #e0e0e0; }
+  .ex-sets { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .set-chip {
+    background: #161616;
+    border: 1px solid #1e1e1e;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #888;
+    font-family: 'SF Mono', Menlo, monospace;
+    white-space: nowrap;
+  }
+  .set-chip.weighted { color: #4ade80; border-color: rgba(74,222,128,0.2); background: rgba(74,222,128,0.05); }
+
+  .empty { color: #444; font-size: 14px; text-align: center; padding: 60px 0; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/dashboard" class="nav-back">←</a>
+  <span class="nav-date">
+    {% set parts = date.split('-') %}
+    {% set months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] %}
+    {{ months[parts[1]|int - 1] }} {{ parts[2]|int }}, {{ parts[0] }}
+  </span>
+  {% if workouts %}
+  <span class="nav-meta">
+    {{ workouts | sum(attribute='exercises') | list | length }} exercises
+    {% set dur = workouts[0].duration %}
+    {% if dur %} · {{ dur }} min{% endif %}
+  </span>
+  {% endif %}
+</nav>
+
+<main>
+  {% if workouts %}
+    {% for w in workouts %}
+    <div class="session">
+      <div class="session-header">
+        {% if w.log_in %}
+        <span class="session-time">{{ w.log_in }}{% if w.log_out %} – {{ w.log_out }}{% endif %}</span>
+        {% endif %}
+        {% if w.duration %}
+        <span class="session-duration">{{ w.duration }} min</span>
+        {% endif %}
+      </div>
+
+      {% for ex in w.exercises %}
+      <div class="ex-row">
+        <div class="ex-name">{{ ex.name }}</div>
+        <div class="ex-sets">
+          {% if ex.sets %}
+            {% for s in ex.sets %}
+            <span class="set-chip {% if s.weight > 0 %}weighted{% endif %}">
+              {% if s.weight > 0 %}{{ s.weight }}kg × {% endif %}{{ s.reps }}
+            </span>
+            {% endfor %}
+          {% elif ex.sets_raw %}
+            <span class="set-chip">{{ ex.sets_raw }}</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">No workout logged for this day.</div>
+  {% endif %}
+</main>
+
+</body>
+</html>

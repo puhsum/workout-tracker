@@ -90,6 +90,21 @@ async def dashboard(request: Request, session: Optional[str] = Cookie(default=No
     })
 
 
+# ── Log detail ────────────────────────────────────────────────────────────────
+
+@app.get("/log/{date}", response_class=HTMLResponse)
+async def log_detail(date: str, request: Request, session: Optional[str] = Cookie(default=None)):
+    if not _get_user(session):
+        return RedirectResponse("/login")
+    workouts = parse_workouts(VAULT_DIR)
+    day_workouts = [w for w in workouts if w["date"] == date]
+    return templates.TemplateResponse("log.html", {
+        "request": request,
+        "date": date,
+        "workouts": day_workouts,
+    })
+
+
 # ── Workout Logging ───────────────────────────────────────────────────────────
 
 @app.get("/workout/new", response_class=HTMLResponse)
