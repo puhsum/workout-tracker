@@ -5,169 +5,209 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GymLocker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #e8e4d8;
-    --surface: #f0ece0;
-    --white: #faf8f3;
-    --border: #ccc8bc;
-    --border-strong: #9a9488;
-    --ink: #1a1a1a;
-    --ink-2: #666;
-    --ink-3: #aaa;
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --border: #1e1e1e;
+    --blue: #111111;
+    --lime: #4ade80;
+    --ink: #e0e0e0;
+    --ink-2: #888;
+    --ink-3: #555;
+    --day-bg: #1a1a1a;
+    --day-workout-bg: #222222;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; }
+  body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; padding-bottom: 48px; }
 
-  nav { background: var(--bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
-  .nav-brand { font-size: 17px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
-  .nav-right { display: flex; align-items: center; gap: 8px; }
-  .nav-right a { font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; transition: all 0.15s; background: var(--white); }
-  .nav-right a:hover { border-color: var(--ink); color: var(--ink); }
-  .nav-right a.new { background: var(--ink); color: var(--white); border-color: var(--ink); }
-  .nav-right a.new:hover { background: #333; }
+  /* ── Nav ── */
+  nav { padding: 16px 20px 0; display: flex; align-items: center; justify-content: space-between; max-width: 520px; margin: 0 auto; }
+  .nav-brand { font-size: 15px; font-weight: 600; color: var(--ink-2); letter-spacing: 0.2px; }
+  .nav-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-new { background: var(--lime); color: #0d0d0d; font-weight: 700; font-size: 13px; border: none; border-radius: 20px; padding: 7px 16px; cursor: pointer; font-family: inherit; transition: opacity 0.15s; text-decoration: none; }
+  .btn-new:hover { opacity: 0.85; }
+  .btn-nav { background: var(--surface); border: 1px solid var(--border); color: var(--ink-2); font-size: 13px; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-family: inherit; text-decoration: none; transition: border-color 0.15s; }
+  .btn-nav:hover { border-color: rgba(255,255,255,0.2); color: var(--ink); }
 
-  main { padding: 24px; max-width: 1440px; margin: 0 auto; }
+  /* ── Main ── */
+  main { padding: 16px 20px; max-width: 520px; margin: 0 auto; }
 
-  /* Calendar header */
-  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .cal-title { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.5px; }
-  .cal-nav { display: flex; gap: 6px; }
-  .cal-nav button { background: var(--white); border: 1px solid var(--border); color: var(--ink-2); border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; }
-  .cal-nav button:hover { border-color: var(--ink); color: var(--ink); }
+  /* ── Calendar card ── */
+  .cal-card { background: var(--blue); border-radius: 24px; padding: 20px 20px 16px; margin-bottom: 20px; }
+  .cal-year { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); margin-bottom: 4px; letter-spacing: 0.3px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .cal-month-title { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.8px; line-height: 1; }
+  .cal-nav-group { display: flex; gap: 6px; }
+  .cal-nav-btn { background: rgba(0,0,0,0.2); border: none; color: rgba(255,255,255,0.8); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; font-family: inherit; }
+  .cal-nav-btn:hover { background: rgba(0,0,0,0.35); }
 
-  /* Day-of-week headers */
-  .cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
-  .cal-dow-cell { text-align: center; font-size: 10px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 0; }
+  /* Day headers */
+  .cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 8px; }
+  .cal-dow-cell { text-align: center; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 0; }
 
-  /* Calendar grid */
+  /* Day grid */
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-cell {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    min-height: 100px;
-    padding: 10px;
-    position: relative;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     cursor: default;
-    transition: all 0.12s;
-    overflow: hidden;
+    position: relative;
+    background: var(--day-bg);
+    transition: background 0.12s;
   }
-  .cal-cell.empty { background: transparent; border-color: transparent; }
-  .cal-cell.has-workout { background: var(--ink); border-color: var(--ink); cursor: pointer; }
-  .cal-cell.has-workout:hover { background: #2a2a2a; }
-  .cal-cell.is-today { border-color: var(--ink) !important; border-width: 2px; }
-  .cal-cell.is-today:not(.has-workout) .cal-day-num { color: var(--ink); font-weight: 700; }
+  .cal-cell.empty { background: transparent; }
+  .cal-cell.has-workout { background: var(--day-workout-bg); cursor: pointer; }
+  .cal-cell.has-workout:hover { background: rgba(0,0,0,0.55); }
+  .cal-cell.is-today { background: var(--lime) !important; }
+  .cal-cell.is-today .cal-day-num { color: #0d0d0d; font-weight: 800; }
 
-  .cal-day-num { font-size: 12px; font-weight: 600; color: var(--ink-3); margin-bottom: 6px; }
-  .cal-cell.has-workout .cal-day-num { color: rgba(255,255,255,0.5); }
+  .cal-day-num { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.85); line-height: 1; }
+  .cal-dot {
+    position: absolute;
+    bottom: 5px;
+    width: 4px; height: 4px;
+    background: rgba(255,255,255,0.65);
+    border-radius: 50%;
+  }
+  .cal-cell.is-today .cal-dot { background: rgba(0,0,0,0.35); }
 
-  .cal-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.6); border-radius: 50%; margin-bottom: 6px; }
-
-  .cal-ex-list { display: flex; flex-direction: column; gap: 2px; }
-  .cal-ex-name { font-size: 11px; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; font-weight: 500; }
-  .cal-ex-more { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-
-  /* Tooltip */
+  /* ── Tooltip ── */
   #tooltip {
     position: fixed; z-index: 999;
-    background: var(--ink); color: var(--white);
-    border-radius: 12px; padding: 14px 16px;
-    min-width: 200px; max-width: 280px;
+    background: #161616; color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px;
+    min-width: 200px; max-width: 260px;
     pointer-events: none; display: none;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   }
-  .tt-date { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-  .tt-meta { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.3px; }
-  .tt-divider { height: 1px; background: rgba(255,255,255,0.12); margin-bottom: 10px; }
-  .tt-ex { margin-bottom: 7px; }
-  .tt-ex:last-child { margin-bottom: 0; }
+  .tt-date { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .tt-meta { font-size: 11px; color: var(--ink-2); margin-bottom: 10px; }
+  .tt-divider { height: 1px; background: var(--border); margin-bottom: 10px; }
   .tt-ex-name { font-size: 12px; font-weight: 600; margin-bottom: 1px; }
-  .tt-ex-sets { font-size: 11px; color: rgba(255,255,255,0.45); font-family: 'SF Mono', Menlo, monospace; }
+  .tt-ex-sets { font-size: 11px; color: var(--ink-2); font-family: 'SF Mono', Menlo, monospace; margin-bottom: 6px; }
+
+  /* ── Recent Workouts ── */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
+  .section-link { font-size: 12px; color: var(--ink-2); text-decoration: none; width: 28px; height: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
+  .section-link:hover { border-color: rgba(255,255,255,0.2); color: var(--ink); }
+
+  .workout-block { margin-bottom: 20px; }
+  .workout-block-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .workout-block-date { font-size: 11px; font-weight: 600; color: var(--lime); text-transform: uppercase; letter-spacing: 0.6px; }
+  .workout-block-time { font-size: 11px; color: var(--ink-3); }
+
+  .activity-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); flex-shrink: 0; margin-top: 5px; }
+  .activity-body { flex: 1; min-width: 0; }
+  .activity-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .activity-detail { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+  .activity-time { font-size: 12px; color: var(--ink-3); flex-shrink: 0; padding-top: 2px; }
+
+  .empty-state { text-align: center; color: var(--ink-3); font-size: 13px; padding: 32px 0; }
+  .empty-state a { color: var(--lime); text-decoration: none; }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-brand">GymLocker</div>
-  <div class="nav-right">
-    <a href="/workout/new" class="new">+ New Workout</a>
-    <a href="/summary">Summary</a>
-    <a href="/logout">Sign out</a>
+  <div class="nav-actions">
+    <a href="/summary" class="btn-nav">Summary</a>
+    <a href="/workout/new" class="btn-new">+ New</a>
   </div>
 </nav>
 
 <main>
-  <div class="cal-header">
-    <div class="cal-title" id="cal-title"></div>
-    <div class="cal-nav">
-      <button onclick="shiftMonth(-1)">←</button>
-      <button onclick="goToday()">Today</button>
-      <button onclick="shiftMonth(1)">→</button>
+  <!-- Calendar -->
+  <div class="cal-card">
+    <div class="cal-year" id="cal-year"></div>
+    <div class="cal-header">
+      <div class="cal-month-title" id="cal-month-title"></div>
+      <div class="cal-nav-group">
+        <button class="cal-nav-btn" onclick="shiftMonth(-1)">‹</button>
+        <button class="cal-nav-btn" onclick="goToday()">·</button>
+        <button class="cal-nav-btn" onclick="shiftMonth(1)">›</button>
+      </div>
     </div>
+    <div class="cal-dow">
+      <div class="cal-dow-cell">M</div>
+      <div class="cal-dow-cell">T</div>
+      <div class="cal-dow-cell">W</div>
+      <div class="cal-dow-cell">T</div>
+      <div class="cal-dow-cell">F</div>
+      <div class="cal-dow-cell">S</div>
+      <div class="cal-dow-cell">S</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
   </div>
-  <div class="cal-dow">
-    <div class="cal-dow-cell">Mon</div>
-    <div class="cal-dow-cell">Tue</div>
-    <div class="cal-dow-cell">Wed</div>
-    <div class="cal-dow-cell">Thu</div>
-    <div class="cal-dow-cell">Fri</div>
-    <div class="cal-dow-cell">Sat</div>
-    <div class="cal-dow-cell">Sun</div>
+
+  <!-- Recent Workouts -->
+  <div class="section-header">
+    <span class="section-title">Recent Workouts</span>
+    <a href="/summary" class="section-link">↗</a>
   </div>
-  <div class="cal-grid" id="cal-grid"></div>
+  <div id="recent-list"></div>
 </main>
 
 <div id="tooltip"></div>
 
 <script>
 const workouts = {{ workouts_json | safe }};
+
+// ── Calendar ────────────────────────────────────────────────────────────────
+
 const byDate = {};
-workouts.forEach(w => {
-  if (!byDate[w.date]) byDate[w.date] = [];
-  byDate[w.date].push(w);
-});
+workouts.forEach(w => { if (!byDate[w.date]) byDate[w.date] = []; byDate[w.date].push(w); });
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const today = new Date();
 let curYear = today.getFullYear(), curMonth = today.getMonth();
 
-function pad(n) { return String(n).padStart(2, '0'); }
-function dateStr(y, m, d) { return `${y}-${pad(m+1)}-${pad(d)}`; }
+function pad(n) { return String(n).padStart(2,'0'); }
+function dateStr(y,m,d) { return `${y}-${pad(m+1)}-${pad(d)}`; }
 
 function renderCalendar() {
   const firstDay = new Date(curYear, curMonth, 1);
-  const daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
+  const daysInMonth = new Date(curYear, curMonth+1, 0).getDate();
   const todayStr = dateStr(today.getFullYear(), today.getMonth(), today.getDate());
-  document.getElementById('cal-title').textContent = `${MONTHS[curMonth]} ${curYear}`;
+
+  document.getElementById('cal-year').textContent = curYear;
+  document.getElementById('cal-month-title').textContent = MONTHS[curMonth];
+
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
-  const offset = (firstDay.getDay() + 6) % 7;
+  const offset = (firstDay.getDay()+6) % 7;
+
   for (let i = 0; i < offset; i++) {
     const el = document.createElement('div');
     el.className = 'cal-cell empty';
     grid.appendChild(el);
   }
+
   for (let d = 1; d <= daysInMonth; d++) {
     const ds = dateStr(curYear, curMonth, d);
     const sessions = byDate[ds] || [];
     const hasWorkout = sessions.length > 0;
     const isToday = ds === todayStr;
+
     const cell = document.createElement('div');
     cell.className = 'cal-cell' + (hasWorkout ? ' has-workout' : '') + (isToday ? ' is-today' : '');
-    let inner = `<div class="cal-day-num">${d}</div>`;
+    cell.innerHTML = `<div class="cal-day-num">${d}</div>${hasWorkout ? '<div class="cal-dot"></div>' : ''}`;
+
     if (hasWorkout) {
-      const allExNames = sessions.flatMap(s => s.exercise_names);
-      inner += `<div class="cal-dot"></div><div class="cal-ex-list">`;
-      allExNames.slice(0, 3).forEach(name => { inner += `<div class="cal-ex-name">${escHtml(name)}</div>`; });
-      if (allExNames.length > 3) inner += `<div class="cal-ex-more">+${allExNames.length - 3} more</div>`;
-      inner += `</div>`;
       cell.addEventListener('mouseenter', e => showTooltip(e, ds, sessions));
       cell.addEventListener('mouseleave', hideTooltip);
-      cell.addEventListener('click', () => { window.location.href = `/log/${ds}`; });
+      cell.addEventListener('click', () => window.location.href = `/log/${ds}`);
     }
-    cell.innerHTML = inner;
     grid.appendChild(cell);
   }
 }
@@ -180,34 +220,119 @@ function shiftMonth(dir) {
 }
 function goToday() { curYear = today.getFullYear(); curMonth = today.getMonth(); renderCalendar(); }
 
+// ── Tooltip ─────────────────────────────────────────────────────────────────
+
 const tooltip = document.getElementById('tooltip');
 function showTooltip(e, ds, sessions) {
+  const [y,m,d] = ds.split('-').map(Number);
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const [y, m, d] = ds.split('-').map(Number);
-  const totalEx = sessions.reduce((s, w) => s + w.exercises.length, 0);
-  const durs = sessions.map(w => w.duration).filter(Boolean);
+  const totalEx = sessions.reduce((s,w) => s + w.exercises.length, 0);
   let html = `<div class="tt-date">${months[m-1]} ${d}, ${y}</div>`;
-  html += `<div class="tt-meta">${totalEx} exercise${totalEx !== 1 ? 's' : ''}${durs.length ? ' · ' + durs.join('+') + ' min' : ''}</div>`;
-  html += `<div class="tt-divider"></div>`;
+  html += `<div class="tt-meta">${totalEx} exercise${totalEx!==1?'s':''}</div><div class="tt-divider"></div>`;
   sessions.forEach(w => w.exercises.forEach(ex => {
-    html += `<div class="tt-ex"><div class="tt-ex-name">${escHtml(ex.name)}</div>${ex.sets_raw ? `<div class="tt-ex-sets">${escHtml(ex.sets_raw)}</div>` : ''}</div>`;
+    html += `<div class="tt-ex-name">${esc(ex.name)}</div>`;
+    if (ex.sets_raw) html += `<div class="tt-ex-sets">${esc(ex.sets_raw)}</div>`;
   }));
   tooltip.innerHTML = html;
   tooltip.style.display = 'block';
-  positionTooltip(e);
+  pos(e);
 }
-function positionTooltip(e) {
+function pos(e) {
   const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
-  let x = e.clientX + 16, y = e.clientY + 16;
-  if (x + tw > window.innerWidth - 8) x = e.clientX - tw - 8;
-  if (y + th > window.innerHeight - 8) y = e.clientY - th - 8;
-  tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+  let x = e.clientX+16, y = e.clientY+16;
+  if (x+tw > window.innerWidth-8) x = e.clientX-tw-8;
+  if (y+th > window.innerHeight-8) y = e.clientY-th-8;
+  tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
 }
-function hideTooltip() { tooltip.style.display = 'none'; }
-document.getElementById('cal-grid').addEventListener('mousemove', e => { if (tooltip.style.display === 'block') positionTooltip(e); });
-function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function hideTooltip() { tooltip.style.display='none'; }
+document.getElementById('cal-grid').addEventListener('mousemove', e => { if (tooltip.style.display==='block') pos(e); });
+
+// ── Recent Workouts ──────────────────────────────────────────────────────────
+
+function groupSets(sets) {
+  if (!sets || !sets.length) return [];
+  const lines = [];
+  let i = 0;
+  while (i < sets.length) {
+    const w = sets[i].weight || 0;
+    const r = sets[i].reps;
+    let count = 1;
+    while (i+count < sets.length && sets[i+count].weight === sets[i].weight) count++;
+    const rStr = `${count} set${count>1?'s':''} × ${r} reps`;
+    lines.push(w ? `${rStr} @ ${w}kg` : rStr);
+    i += count;
+  }
+  return lines;
+}
+
+function fmt12(t) {
+  if (!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  const suffix = h>=12 ? 'pm' : 'am';
+  const h12 = h%12 || 12;
+  return `${h12}:${pad(m)}${suffix}`;
+}
+
+function relativeDate(dateStr) {
+  const todayStr = dateStr => {
+    const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  };
+  const yest = new Date(); yest.setDate(yest.getDate()-1);
+  const yestStr = `${yest.getFullYear()}-${pad(yest.getMonth()+1)}-${pad(yest.getDate())}`;
+  const t = todayStr();
+  if (dateStr === t) return 'Today';
+  if (dateStr === yestStr) return 'Yesterday';
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[m-1]} ${d}`;
+}
+
+function renderRecent() {
+  const list = document.getElementById('recent-list');
+  const recent = workouts.slice(0, 4);
+
+  if (!recent.length) {
+    list.innerHTML = `<div class="empty-state">No workouts yet — <a href="/workout/new">log your first one</a></div>`;
+    return;
+  }
+
+  list.innerHTML = recent.map(w => {
+    const label = relativeDate(w.date);
+    const time = w.log_in ? fmt12(w.log_in) : '';
+
+    const exercises = w.exercises.map((ex, i) => {
+      let detail = '';
+      if (ex.sets && ex.sets.length) {
+        detail = groupSets(ex.sets).join('<br>');
+      } else if (ex.sets_raw) {
+        detail = esc(ex.sets_raw);
+      }
+      return `
+        <div class="activity-row">
+          <div class="activity-dot"></div>
+          <div class="activity-body">
+            <div class="activity-name">${esc(ex.name)}</div>
+            ${detail ? `<div class="activity-detail">${detail}</div>` : ''}
+          </div>
+          ${i === 0 && time ? `<div class="activity-time">${time}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="workout-block">
+        <div class="workout-block-header">
+          <span class="workout-block-date">${esc(label)}</span>
+          ${w.duration ? `<span class="workout-block-time">${w.duration} min</span>` : ''}
+        </div>
+        ${exercises}
+      </div>`;
+  }).join('');
+}
+
+function esc(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 renderCalendar();
+renderRecent();
 </script>
 </body>
 </html>

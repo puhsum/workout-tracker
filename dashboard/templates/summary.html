@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  :root { --bg:#e8e4d8; --surface:#f0ece0; --white:#faf8f3; --border:#ccc8bc; --ink:#1a1a1a; --ink-2:#666; --ink-3:#aaa; }
+  :root { --bg:#0d0d0d; --surface:#1a1a1a; --white:#161616; --border:#1e1e1e; --ink:#e0e0e0; --ink-2:#888; --ink-3:#555; }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; padding-bottom: 48px; }
 
@@ -17,7 +17,7 @@
   .nav-right { display: flex; gap: 8px; }
   .nav-right a { font-size: 13px; font-weight: 500; color: var(--ink-2); text-decoration: none; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--white); transition: all 0.15s; }
   .nav-right a:hover { border-color: var(--ink); color: var(--ink); }
-  .nav-right a.new { background: var(--ink); color: var(--white); border-color: var(--ink); }
+  .nav-right a.new { background: #4ade80; color: #0d0d0d; border-color: #4ade80; font-weight: 700; }
 
   main { padding: 28px 24px; max-width: 1200px; margin: 0 auto; }
 
@@ -27,7 +27,7 @@
   .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 28px; }
   @media (max-width: 800px) { .stats { grid-template-columns: repeat(3, 1fr); } }
   .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
-  .stat-value { font-size: 34px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -1px; }
+  .stat-value { font-size: 34px; font-weight: 700; color: #4ade80; line-height: 1; letter-spacing: -1px; }
   .stat-value.sm { font-size: 18px; padding-top: 8px; letter-spacing: -0.5px; }
 
   /* Charts */

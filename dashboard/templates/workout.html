@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#e8e4d8; --surface:#f0ece0; --white:#faf8f3; --border:#ccc8bc; --ink:#1a1a1a; --ink-2:#666; --ink-3:#aaa; }
+  :root { --bg:#0d0d0d; --surface:#1a1a1a; --white:#161616; --border:#1e1e1e; --ink:#e0e0e0; --ink-2:#888; --ink-3:#555; }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { overflow-x: hidden; }
   body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; padding-bottom: 40px; }
@@ -16,9 +16,9 @@
   .nav-back { color: var(--ink-3); font-size: 22px; text-decoration: none; line-height: 1; justify-self: start; padding: 8px 8px 8px 0; transition: color 0.15s; }
   .nav-back:hover { color: var(--ink); }
   .timer { font-size: 22px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.5px; justify-self: center; }
-  .btn-finish { background: var(--ink); color: var(--white); font-weight: 700; font-size: 14px; border: none; border-radius: 20px; padding: 9px 18px; cursor: pointer; transition: background 0.15s; justify-self: end; white-space: nowrap; font-family: inherit; }
-  .btn-finish:hover { background: #333; }
-  .btn-finish:disabled { background: var(--border); color: var(--ink-3); cursor: not-allowed; }
+  .btn-finish { background: #4ade80; color: #0d0d0d; font-weight: 700; font-size: 14px; border: none; border-radius: 20px; padding: 9px 18px; cursor: pointer; transition: opacity 0.15s; justify-self: end; white-space: nowrap; font-family: inherit; }
+  .btn-finish:hover { opacity: 0.85; }
+  .btn-finish:disabled { background: var(--border); color: var(--ink-3); cursor: not-allowed; opacity: 1; }
 
   main { padding: 20px; max-width: 600px; margin: 0 auto; }
   .section-title { font-size: 10px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
@@ -41,7 +41,7 @@
   .name-row { margin-bottom: 14px; }
   .type-toggle { display: flex; gap: 6px; margin-bottom: 14px; }
   .type-btn { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--ink-3); border-radius: 20px; padding: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: center; font-family: inherit; }
-  .type-btn.active { background: var(--ink); border-color: var(--ink); color: var(--white); }
+  .type-btn.active { background: #4ade80; border-color: #4ade80; color: #0d0d0d; }
 
   #sets-container { margin-bottom: 12px; }
   .set-row { display: grid; grid-template-columns: 1fr 16px 1fr 28px; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -60,10 +60,10 @@
   .btn-add-set { background: none; border: 1px dashed var(--border); color: var(--ink-3); border-radius: 8px; padding: 8px; font-size: 13px; cursor: pointer; width: 100%; margin-bottom: 14px; transition: all 0.15s; font-family: inherit; }
   .btn-add-set:hover { border-color: var(--ink); color: var(--ink); border-style: solid; }
 
-  .btn-log { background: var(--ink); border: none; color: var(--white); border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.15s; font-family: inherit; }
-  .btn-log:hover { background: #333; }
+  .btn-log { background: #4ade80; border: none; color: #0d0d0d; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: opacity 0.15s; font-family: inherit; }
+  .btn-log:hover { opacity: 0.85; }
 
-  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--white); padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #4ade80; color: #0d0d0d; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
   #toast.show { opacity: 1; }
 </style>
 </head>
